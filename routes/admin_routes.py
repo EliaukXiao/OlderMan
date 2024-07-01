@@ -54,5 +54,31 @@ def register():
     db.session.commit()
 
     return jsonify({"message": "Registration successful", "code": 0, "user": new_user.to_dict()}), 201
+@admin_bp.route('/all', methods=['GET'])
+def get_all_admins():
+    admins = AdminUser.query.all()
+    response = {
+        "code": 0,
+        "message": "Success",
+        "data": [admin.to_dict() for admin in admins]
+    }
+    return jsonify(response), 200
 
+
+@admin_bp.route('/<username>', methods=['GET'])
+def get_admin_by_username(username):
+    user = AdminUser.query.filter_by(username=username).first()
+    if user:
+        response = {
+            "code": 0,
+            "message": "Success",
+            "data": user.to_dict()
+        }
+        return jsonify(response), 200
+    else:
+        response = {
+            "code": 1,
+            "message": "User not found"
+        }
+        return jsonify(response), 404
 # 其他CRUD操作

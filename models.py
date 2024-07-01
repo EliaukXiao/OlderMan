@@ -39,7 +39,6 @@ class EmployeeInfo(db.Model):
     hire_date = db.Column(db.DateTime)
     resign_date = db.Column(db.DateTime)
     imgset_dir = db.Column(db.String(200))
-    profile_photo = db.Column(db.String(200))
     description = db.Column(db.String(200))
 
     def to_dict(self):
