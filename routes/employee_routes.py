@@ -55,4 +55,28 @@ def add_employee():
         db.session.rollback()
         return jsonify({"code": 2, "message": "An error occurred while adding the employee", "error": str(e)}), 500
 
+
+@employee_bp.route('/search', methods=['GET'])
+def search_employees():
+    query = EmployeeInfo.query
+    filters = {}
+
+    if 'id' in request.args:
+        filters['id'] = request.args.get('id')
+    if 'username' in request.args:
+        filters['username'] = request.args.get('username')
+    if 'gender' in request.args:
+        filters['gender'] = request.args.get('gender')
+
+    for attr, value in filters.items():
+        if value:
+            query = query.filter(getattr(EmployeeInfo, attr).like(f"%{value}%"))
+
+    employees = query.all()
+    response = {
+        "code": 0,
+        "message": "Success",
+        "data": [add_image_url(employee.to_dict()) for employee in employees]
+    }
+    return jsonify(response), 200
 # 添加其他CRUD操作，例如更新和删除员工信息

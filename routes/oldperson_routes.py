@@ -62,4 +62,33 @@ def add_oldperson():
     }
     return jsonify(response), 201
 
+
+@oldperson_bp.route('/search', methods=['GET'])
+def search_oldpersons():
+    query = OldPersonInfo.query
+    filters = {}
+
+    if 'id' in request.args:
+        filters['id'] = request.args.get('id')
+    if 'username' in request.args:
+        filters['username'] = request.args.get('username')
+    if 'gender' in request.args:
+        filters['gender'] = request.args.get('gender')
+    if 'room_number' in request.args:
+        filters['room_number'] = request.args.get('room_number')
+    if 'health_state' in request.args:
+        filters['health_state'] = request.args.get('health_state')
+
+    for attr, value in filters.items():
+        if value:
+            query = query.filter(getattr(OldPersonInfo, attr).like(f"%{value}%"))
+
+    oldpersons = query.all()
+    response = {
+        "code": 0,
+        "message": "Success",
+        "data": [add_image_url(oldperson.to_dict()) for oldperson in oldpersons]
+    }
+    return jsonify(response), 200
+
 # 其他CRUD操作

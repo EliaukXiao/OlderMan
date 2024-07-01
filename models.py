@@ -43,22 +43,6 @@ class EmployeeInfo(db.Model):
 
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
-
-class VolunteerInfo(db.Model):
-    __tablename__ = 'volunteer_info'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50))
-    gender = db.Column(db.String(5))
-    phone = db.Column(db.String(50))
-    birthday = db.Column(db.DateTime)
-    checkin_date = db.Column(db.DateTime)
-    checkout_date = db.Column(db.DateTime)
-    imgset_dir = db.Column(db.String(200))
-    profile_photo = db.Column(db.String(200))
-
-    def to_dict(self):
-        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
-
 class EventInfo(db.Model):
     __tablename__ = 'event_info'
     id = db.Column(db.Integer, primary_key=True)
