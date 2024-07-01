@@ -1,12 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-db = SQLAlchemy()
-bcrypt = Bcrypt()
-from flask_sqlalchemy import SQLAlchemy
-from flask_bcrypt import Bcrypt
 
 db = SQLAlchemy()
 bcrypt = Bcrypt()
+
 class OldPersonInfo(db.Model):
     __tablename__ = 'oldperson_info'
     id = db.Column(db.Integer, primary_key=True)
@@ -17,7 +14,7 @@ class OldPersonInfo(db.Model):
     birthday = db.Column(db.DateTime, nullable=False)
     checkin_date = db.Column(db.DateTime, nullable=False)
     checkout_date = db.Column(db.DateTime, nullable=True)
-    imgset_dir = db.Column(db.String(200), nullable=True, default=None)  # 使用None作为默认值
+    imgset_dir = db.Column(db.String(200), nullable=True, default=None)
     room_number = db.Column(db.String(50), nullable=False)
     firstguardian_name = db.Column(db.String(50), nullable=False)
     firstguardian_relationship = db.Column(db.String(50), nullable=False)
@@ -30,10 +27,8 @@ class OldPersonInfo(db.Model):
     health_state = db.Column(db.String(50), nullable=False)
 
     def to_dict(self):
-        data = {column.name: getattr(self, column.name) for column in self.__table__.columns}
-        if not data['imgset_dir']:
-            data['imgset_dir'] = '/static/orderMan.jpg'  # 默认图像路径
-        return data
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
+
 class EmployeeInfo(db.Model):
     __tablename__ = 'employee_info'
     id = db.Column(db.Integer, primary_key=True)
