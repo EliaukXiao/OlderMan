@@ -6,7 +6,12 @@ oldperson_bp = Blueprint('oldperson', __name__)
 @oldperson_bp.route('/', methods=['GET'])
 def get_oldpersons():
     oldpersons = OldPersonInfo.query.all()
-    return jsonify([oldperson.to_dict() for oldperson in oldpersons])
+    response = {
+        "code": 0,
+        "message": "Success",
+        "data": [oldperson.to_dict() for oldperson in oldpersons]
+    }
+    return jsonify(response), 200
 
 @oldperson_bp.route('/', methods=['POST'])
 def add_oldperson():
@@ -14,6 +19,12 @@ def add_oldperson():
     new_oldperson = OldPersonInfo(**data)
     db.session.add(new_oldperson)
     db.session.commit()
-    return jsonify(new_oldperson.to_dict()), 201
+    response = {
+        "code": 0,
+        "message": "Old person added successfully",
+        "data": new_oldperson.to_dict()
+    }
+    return jsonify(response), 201
 
-# 添加其他CRUD操作
+# 其他CRUD操作
+
