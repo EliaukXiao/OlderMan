@@ -13,17 +13,28 @@ def add_image_url(data):
 @employee_bp.route('/all', methods=['GET'])
 def get_employees():
     employees = EmployeeInfo.query.all()
+    total_count = len(employees)
+    male_count = sum(1 for employee in employees if employee.gender == '1')
+    female_count = sum(1 for employee in employees if employee.gender == '0')
+
     response = {
         "code": 0,
         "message": "Success",
-        "data": [add_image_url(employee.to_dict()) for employee in employees]
+        "data": [add_image_url(employee.to_dict()) for employee in employees],
+        "total_count": total_count,
+        "male_count": male_count,
+        "female_count": female_count
     }
     return jsonify(response), 200
-
-@employee_bp.route('/', methods=['POST'])
+@employee_bp.route('/add', methods=['POST'])
 def add_employee():
     data = request.get_json()
-    required_fields = ['username', 'gender', 'phone', 'birthday', 'hire_date']
+    required_fields = ['username', 'gender', 'phone', 'hire_date']
+
+
+    # 检查用户名是否重复，重复则不允许新建
+    if EmployeeInfo.query.filter_by(username=data['username']).first():
+        return jsonify({"code": 1, "message": "Username already exists"}), 400
 
     # 检查是否缺少必填字段
     for field in required_fields:
@@ -35,11 +46,11 @@ def add_employee():
         username=data['username'],
         gender=data['gender'],
         phone=data['phone'],
-        birthday=data['birthday'],
         hire_date=data['hire_date'],
-        resign_date=data.get('resign_date'),
-        imgset_dir=data.get('imgset_dir', 'static/employee.jpg'),  # 设置默认图像路径
-        description=data.get('description', '')
+        imgset_dir='',
+        description=data.get('description', ''),
+        isCollected= False  # 默认为 False
+
     )
 
     try:
@@ -79,4 +90,61 @@ def search_employees():
         "data": [add_image_url(employee.to_dict()) for employee in employees]
     }
     return jsonify(response), 200
-# 添加其他CRUD操作，例如更新和删除员工信息
+
+
+#修改员工信息
+@employee_bp.route('/update', methods=['PUT'])
+def update_employee():
+    data = request.get_json()
+    user_id = data.get('id')
+
+    if not user_id:
+        return jsonify({"code": 1, "message": "Missing required field: id"}), 400
+
+    employee = EmployeeInfo.query.get(user_id)
+    if not employee:
+        return jsonify({"code": 1, "message": "Employee not found"}), 404
+
+    required_fields = ['gender', 'phone', 'hire_date','description']
+
+    for field in required_fields:
+        if field not in data or not data[field]:
+            return jsonify({"code": 1, "message": f"Missing required field: {field}"}), 400
+
+    employee.gender = data['gender']
+    employee.phone = data['phone']
+    employee.hire_date = data['hire_date']
+    employee.description = data.get('description', '')
+
+    db.session.commit()
+
+    response = {
+        "code": 0,
+        "message": "Employee updated successfully",
+        "data": add_image_url(employee.to_dict())
+    }
+
+    return jsonify(response), 200
+
+#删除老年人信息
+@employee_bp.route('/delete', methods=['DELETE'])
+def delete_employee():
+    data=request.get_json()
+    user_id=data.get('id')
+    if not user_id:
+        return jsonify({"code": 1, "message": "Missing required field: id"}), 400
+
+    employee = EmployeeInfo.query.get(user_id)
+
+    if not employee:
+        return jsonify({"code": 1, "message": "Employee not found"}), 404
+    db.session.delete(employee)
+    db.session.commit()
+
+    response = {
+        "code": 0,
+        "message": "Employee deleted successfully",
+        "data": add_image_url(employee.to_dict())
+    }
+
+    return jsonify(response), 200

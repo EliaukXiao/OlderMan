@@ -43,6 +43,27 @@ with app.app_context():
         health_state='Fair'
     )
 
+    old_person3 = OldPersonInfo(
+        username='Tom Brown',
+        gender='1',
+        phone='3456789012',
+        id_card='345678901234567890',
+        birthday=datetime(1930, 10, 10),
+        checkin_date=datetime(2021, 10, 1),
+        room_number='103',
+        firstguardian_name='Mary Brown',
+        firstguardian_relationship='Daughter',
+        firstguardian_phone='0987654323',
+        firstguardian_wechat='mary_brown',
+        secondguardian_name='Mike Brown',
+        secondguardian_relationship='Son',
+        secondguardian_phone='0987654324',
+        secondguardian_wechat='mike_brown',
+        health_state='Poor'
+    )
+
+
     db.session.add(old_person1)
     db.session.add(old_person2)
+    db.session.add(old_person3)
     db.session.commit()

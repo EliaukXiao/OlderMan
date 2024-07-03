@@ -13,7 +13,6 @@ class OldPersonInfo(db.Model):
     id_card = db.Column(db.String(50), nullable=False)
     birthday = db.Column(db.DateTime, nullable=False)
     checkin_date = db.Column(db.DateTime, nullable=False)
-    checkout_date = db.Column(db.DateTime, nullable=True)
     imgset_dir = db.Column(db.String(200), nullable=True, default=None)
     room_number = db.Column(db.String(50), nullable=False)
     firstguardian_name = db.Column(db.String(50), nullable=False)
@@ -25,6 +24,7 @@ class OldPersonInfo(db.Model):
     secondguardian_phone = db.Column(db.String(50), nullable=False)
     secondguardian_wechat = db.Column(db.String(50), nullable=False)
     health_state = db.Column(db.String(50), nullable=False)
+    isCollected = db.Column(db.Boolean, nullable=False, default=False)
 
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
@@ -35,11 +35,10 @@ class EmployeeInfo(db.Model):
     username = db.Column(db.String(50))
     gender = db.Column(db.String(5))
     phone = db.Column(db.String(50))
-    birthday = db.Column(db.DateTime)
     hire_date = db.Column(db.DateTime)
-    resign_date = db.Column(db.DateTime)
     imgset_dir = db.Column(db.String(200))
     description = db.Column(db.String(200))
+    isCollected = db.Column(db.Boolean, nullable=False, default=False)
 
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
